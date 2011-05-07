@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+    <head>
+        <title>PhoneGap!</title>
+        <link href="jquery.mobile-1.0a4.1.min.css" rel="stylesheet" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
+
+        <script>
+            window.addEventListener('deviceready', function () {
+                console.log('deviceready');
+                // add your PhoneGap-dependent functionality here!
+            });
+        </script>
+        <script src="phonegap.0.9.5.min.js"></script>
+        
+        <script src="jquery-1.6.min.js"></script>
+        
+        <script>
+            var g_containerUrl = 'http://tcontepub.blob.core.windows.net/images/';
+            var g_image = 'Tulips.jpg';
+            $(document).bind('mobileinit', function() {
+                // JQM stuff
+                $('#bar').live('pageshow', function(event, ui) {
+                    //alert('This page was just hidden: '+ ui.prevPage);
+                    $('#display').html('<img src="' + g_image + '" />');
+                });
+            });
+            $(document).ready(function() {
+                // Retrieve list of Blobs
+                $.ajax({
+                    type: 'GET',
+                    url: g_containerUrl + '?restype=container&comp=list',
+                    dataType: 'xml',
+                    success: listBlobs
+                });
+            });
+            function listBlobs(xml) {
+                $(xml).find('Blob').each(function() {
+                    var url = $(this).find('Url').text();
+                    var name = $(this).find('Name').text();
+                    $('#list').append('<li><a href="#bar" data-url="' + url + '">' + name + '</a></li>');
+                });
+                $('#list').listview("refresh");
+                // Click event
+                $('#list li a').click(listItemClick);
+            }
+            function listItemClick() {
+                g_image = $(this).attr("data-url");
+            }
+        </script>
+        
+        <script src="jquery.mobile-1.0a4.1.js"></script>
+    </head>
+    <body>
+
+        <!-- Start of first page -->
+        <div data-role="page" id="foo">
+            
+            <div data-role="header">
+                <h1>List of Images</h1>
+            </div>
+            
+            <div data-role="content">	
+                <ul data-role="listview" id="list">
+                </ul>
+            </div>
+            
+            <div data-role="footer">
+                <h4>Page Footer</h4>
+            </div>
+        </div>
+        
+        
+        <!-- Start of second page -->
+        <div data-role="page" id="bar">
+            
+            <div data-role="header">
+                <h1>Image</h1>
+            </div>
+            
+            <div data-role="content">
+                <div id="display"></div>
+            </div>
+            
+            <div data-role="footer">
+                <h4>Page Footer</h4>
+            </div>
+        </div>
+        
+    </body>
+</html>

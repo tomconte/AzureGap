@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+    <head>
+        <title>PhoneGap!</title>
+        <!--<link href="style.css" rel="stylesheet" type="text/css" />-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
+    </head>
+    <body>
+        <h1>Hey, it's PhoneGap plus Azure!</h1>
+        
+        <div id="panel"></div>
+        <div id="controls">
+            <a href="#">prev</a> | <a href="#">next</a>
+        </div>
+        
+        <script src="phonegap.0.9.5.min.js"></script>
+        <script>
+            window.addEventListener('deviceready', function () {
+                                    // add your PhoneGap-dependent functionality here!
+                                    });
+            </script>
+        <script src="jquery-1.6.min.js"></script>
+        <script type="text/javascript">
+            var items = [];
+            var curitem = 0;
+            $(document).ready(function () {
+                              // Set up event handlers
+                              $('#controls a').click(function() {
+                                                     if ($(this).html() == 'prev') {
+                                                     if (curitem > 0) {
+                                                     --curitem;
+                                                     }
+                                                     } else if ($(this).html() == 'next') {
+                                                     if (curitem < items.length-1) {
+                                                     ++curitem;
+                                                     }
+                                                     }
+                                                     showItem(items[curitem]);
+                                                     });
+                              
+                              // Retrieve list of Blobs
+                              var containerUrl = 'http://tcontepub.blob.core.windows.net/json/';
+                              $.ajax({
+                                     type: 'GET',
+                                     url: containerUrl + '?restype=container&comp=list',
+                                     dataType: 'xml',
+                                     success: listBlobs
+                                     });
+                              });
+            
+            // Called when list blobs call succeeded.
+            // Stores items URL in array, then displays first item
+            function listBlobs(xml) {
+                $(xml).find('Blob').each(function() {
+                                         var url = $(this).find('Url').text();
+                                         $('#panel').append(url + '<br />');
+                                         items.push(url);
+                                         });
+                showItem(items[curitem]);
+            }
+            
+            // Shows one item. Retrieves the JSON Blob at URL location.
+            // Uses simple jQuery effects to show the new data.
+            function showItem(url) {
+                $.ajax({
+                       type: 'GET',
+                       url: url,
+                       dataType: 'json',
+                       success: function(o) {
+                            $('#panel').fadeOut('slow', function() {
+                                                $('#panel').html('<div class="title">' + o.title + '</div>');
+                                                $('#panel').html('<img src="http://tcontepub.blob.core.windows.net' + o.image + '" />');
+                                                $('#panel').fadeIn('slow');
+                            });
+                       }
+                });
+            }
+            </script>
+    </body>
+</html>
