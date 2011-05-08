@@ -17,12 +17,13 @@
         
         <script>
             var g_containerUrl = 'http://tcontepub.blob.core.windows.net/images/';
-            var g_image = 'Tulips.jpg';
+            var g_image = '';
+            var g_name = '';
             $(document).bind('mobileinit', function() {
                 // JQM stuff
-                $('#bar').live('pageshow', function(event, ui) {
+                $('#bar').live('pagebeforeshow', function(event, ui) {
                     //alert('This page was just hidden: '+ ui.prevPage);
-                    $('#display').html('<img src="' + g_image + '" />');
+                    $('#display').html('<img style="display: block; width: 100%;" src="' + g_image + '" /><p>' + g_name + '</p>');
                 });
             });
             $(document).ready(function() {
@@ -46,6 +47,7 @@
             }
             function listItemClick() {
                 g_image = $(this).attr("data-url");
+                g_name = $(this).html();
             }
         </script>
         
@@ -66,7 +68,7 @@
             </div>
             
             <div data-role="footer">
-                <h4>Page Footer</h4>
+                <h4>AzureGap</h4>
             </div>
         </div>
         
@@ -83,7 +85,7 @@
             </div>
             
             <div data-role="footer">
-                <h4>Page Footer</h4>
+                <h4>AzureGap</h4>
             </div>
         </div>
         
